@@ -7,7 +7,7 @@
 
 # NotificaSUS
 
-Sistema de Notificação de Incidentes em Saúde — Prefeitura de Pinhais, PR.
+Sistema de Notificação de Incidentes relacionados à Segurança do Paciente em Unidades de Saúde da APS — Prefeitura de Pinhais, PR.
 
 Plataforma mobile-first para registro anônimo de incidentes em unidades de saúde via QR Code, com dashboard administrativo para gestão e relatórios. Totalmente aderente à LGPD.
 
