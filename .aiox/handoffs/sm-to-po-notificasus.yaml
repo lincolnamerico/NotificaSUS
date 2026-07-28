@@ -1,0 +1,26 @@
+from_agent: sm
+to_agent: po
+last_command: draft-stories-epic1
+next_command: validate-story-draft
+next_command_args: --story docs/stories/1.1-setup-inicial-projeto.md
+workflow_chain: sdc
+workflow_step: 1.5
+summary: >
+  5 stories da Epic 1 criadas em docs/stories/ em status Draft:
+  1.1 Setup Inicial do Projeto
+  1.2 Rota de Notificacao com Autopreenchimento
+  1.3 Middleware de Anonimizacao
+  1.4 Formulario de Notificacao (3 Passos)
+  1.5 Confirmacao com Protocolo
+  Proximo passo: @po validar as stories (Draft -> Ready).
+context_files:
+  - docs/stories/1.1-setup-inicial-projeto.md
+  - docs/stories/1.2-rota-notificacao-autopreenchimento.md
+  - docs/stories/1.3-middleware-anonimizacao.md
+  - docs/stories/1.4-formulario-notificacao-3-passos.md
+  - docs/stories/1.5-confirmacao-protocolo.md
+  - docs/architecture.md
+  - docs/prd.md
+consumed: true
+consumed_at: 2026-07-28T16:05:00-03:00
+created_at: 2026-07-28T16:00:00-03:00

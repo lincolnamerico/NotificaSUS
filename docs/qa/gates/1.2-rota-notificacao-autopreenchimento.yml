@@ -1,0 +1,10 @@
+schema: 1
+story: "1.2"
+gate: PASS
+status_reason: "Pagina /notificar com autopreenchimento via ?usf=slug e API GET /api/usf implementados. Build, typecheck, lint (src/) e 301/302 testes passam. Falhas exclusivas em .aiox-core/ (pre-existente)."
+reviewer: "Quinn"
+reviewed_revision: "N/A (no git repository)"
+updated: "2026-07-28T15:53:00-03:00"
+top_issues: []
+waiver:
+  active: false

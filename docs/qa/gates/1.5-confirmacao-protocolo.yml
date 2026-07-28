@@ -1,0 +1,10 @@
+schema: 1
+story: "1.5"
+gate: PASS
+status_reason: "Endpoint POST /api/notificar criado com middleware de anonimizacao e geracao de protocolo unico. Tela de confirmacao exibe protocolo, resumo e instrucoes. Formulario integrado com redirecionamento. 19 testes passando."
+reviewer: "Quinn"
+reviewed_revision: "N/A (no git repository)"
+updated: "2026-07-28T16:10:00-03:00"
+top_issues: []
+waiver:
+  active: false

@@ -1,0 +1,17 @@
+from_agent: pm
+to_agent: architect
+last_command: create-prd
+next_command: create-architecture
+next_command_args: --context docs/prd.md
+workflow_chain: spec-pipeline
+workflow_step: 2
+summary: >
+  PRD do NotificaSUS criado e salvo em docs/prd.md com 4 epics, 11 stories,
+  9 requisitos funcionais e 8 nao-funcionais.
+  Proximo passo: @architect criar o System Design Document.
+context_files:
+  - docs/prd.md
+  - docs/brainstorming/001-notificasus-inicial.md
+  - solicitacao_inicial.md
+consumed: true
+consumed_at: 2026-07-28T15:45:00-03:00

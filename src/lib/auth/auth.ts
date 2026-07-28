@@ -1,0 +1,22 @@
+import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+    }),
+  ],
+  callbacks: {
+    async signIn({ profile }) {
+      if (!profile?.email?.endsWith("@pinhais.pr.gov.br")) {
+        return false;
+      }
+      return true;
+    },
+  },
+  pages: {
+    signIn: "/gestao/login",
+  },
+});

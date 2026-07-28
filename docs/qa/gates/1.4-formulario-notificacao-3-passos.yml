@@ -1,0 +1,10 @@
+schema: 1
+story: "1.4"
+gate: PASS
+status_reason: "Formulario de notificacao em 3 passos implementado com categorias NotiVISA, descricao/gravidade, revisao com toggle anonimo e LGPD. 10 testes de navegacao e validacao passando."
+reviewer: "Quinn"
+reviewed_revision: "N/A (no git repository)"
+updated: "2026-07-28T16:03:00-03:00"
+top_issues: []
+waiver:
+  active: false

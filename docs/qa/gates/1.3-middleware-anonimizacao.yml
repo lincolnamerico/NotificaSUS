@@ -1,0 +1,10 @@
+schema: 1
+story: "1.3"
+gate: PASS
+status_reason: "Middleware de anonimizacao LGPD implementado com stripping de IP, User-Agent e headers identificaveis. Toggle 'Modo Anonimo' + consentimento LGPD. 7 testes de conformidade passando."
+reviewer: "Quinn"
+reviewed_revision: "N/A (no git repository)"
+updated: "2026-07-28T15:58:00-03:00"
+top_issues: []
+waiver:
+  active: false

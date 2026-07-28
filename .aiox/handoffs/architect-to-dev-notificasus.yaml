@@ -1,0 +1,18 @@
+from_agent: architect
+to_agent: dev
+last_command: create-full-stack-architecture
+next_command: develop-story
+next_command_args: --story E1 --context docs/architecture.md --context docs/prd.md
+workflow_chain: sdc
+workflow_step: 3
+summary: >
+  Arquitetura completa do NotificaSUS criada e salva em docs/architecture.md.
+  Tech stack definido, schema do banco pronto, API spec, project structure.
+  Proximo passo: @dev iniciar implementacao das stories da Epic 1.
+context_files:
+  - docs/architecture.md
+  - docs/prd.md
+  - docs/brainstorming/001-notificasus-inicial.md
+consumed: true
+consumed_at: 2026-07-28T16:00:00-03:00
+created_at: 2026-07-28T15:45:00-03:00

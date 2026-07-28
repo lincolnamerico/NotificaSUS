@@ -1,0 +1,52 @@
+from_agent: dev
+to_agent: dev
+handoff_type: session-end
+epic: 1
+story_count: 5
+stories_completed:
+  - 1.1-setup-inicial-projeto
+  - 1.2-rota-notificacao-autopreenchimento
+  - 1.3-middleware-anonimizacao
+  - 1.4-formulario-notificacao-3-passos
+  - 1.5-confirmacao-protocolo
+summary: >
+  Epic 1 (Fundacao) completa com 5 stories implementadas e validadas pelo QA Gate.
+
+  Sistema funcional de notificacao anonima de incidentes:
+  - Next.js 16 App Router com autopreenchimento via ?usf=slug
+  - Drizzle ORM + Neon PostgreSQL (schema: usf, notificacao, usuario)
+  - NextAuth v5 (Google OAuth, dominio @pinhais.pr.gov.br)
+  - Middleware de anonimizacao LGPD (IP/User-Agent/headers descartados)
+  - Formulario de 3 passos (tipo, descricao, revisao) com categorias NotiVISA
+  - POST /api/notificar com validacao e geracao de protocolo (NOT-YYYYMMDD-XXXX)
+  - Tela de confirmacao com check verde, resumo e instrucoes
+  - 337 testes passando; lint/typecheck zero erros em src/
+
+  Proximo passo: Epics 2-4 (Dashboard, Relatorios, Admin)
+context_files:
+  - docs/architecture.md
+  - docs/prd.md
+  - src/lib/db/schema.ts
+  - src/lib/db/index.ts
+  - src/lib/auth/auth.ts
+  - src/lib/middleware/anonimizacao.ts
+  - src/utils/protocolo.ts
+  - src/components/formulario/formulario-notificacao.tsx
+  - src/components/formulario/types.ts
+  - src/components/formulario/passo-tipo-incidente.tsx
+  - src/components/formulario/passo-descricao.tsx
+  - src/components/formulario/passo-revisao.tsx
+  - src/components/formulario/toggle-anonimo.tsx
+  - src/components/ui/consentimento-lgpd.tsx
+  - src/app/notificar/page.tsx
+  - src/app/notificar/confirmacao/page.tsx
+  - src/app/api/usf/route.ts
+  - src/app/api/notificar/route.ts
+  - src/app/api/auth/[...nextauth]/route.ts
+  - src/app/globals.css
+  - src/app/layout.tsx
+  - drizzle.config.ts
+  - vitest.config.ts
+  - package.json
+consumed: false
+created_at: 2026-07-28T16:12:00-03:00

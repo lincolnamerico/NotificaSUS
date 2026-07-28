@@ -1,0 +1,10 @@
+schema: 1
+story: "1.1"
+gate: PASS
+status_reviewer: "Projeto Next.js 16.2.12 inicializado com todas as ferramentas configuradas. Build e typecheck passam. Lint e test com ruído exclusivo do framework .aiox-core (pre-existente, fora do escopo)."
+reviewer: "Quinn"
+reviewed_revision: "N/A (no git repository)"
+updated: "2026-07-28T15:46:00-03:00"
+top_issues: []
+waiver:
+  active: false
