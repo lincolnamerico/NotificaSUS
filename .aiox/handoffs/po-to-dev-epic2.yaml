@@ -1,0 +1,23 @@
+from_agent: po
+to_agent: dev
+handoff_type: epic-ready
+epic: 2
+epic_title: "Dashboard & Gestao"
+stories_ready:
+  - 2.1-autenticacao-oauth-google (Ready)
+  - 2.2-dashboard-kpis-por-usf (Ready)
+  - 2.3-subdominio-segregado (Ready)
+summary: >
+  PO (Pax) validou e aprovou as 3 stories do Epic 2 com GO (9/10 cada).
+  Todas estavam em Draft, agora estao Ready para implementacao.
+  CodeRabbit Integration sections foram adicionadas nas stories 2.2 e 2.3
+  que estavam sem (2.1 ja tinha).
+next_action: >
+  @dev (Dex) implementar as stories com *develop para cada uma.
+  Ordem sugerida: 2.1 (auth) -> 2.2 (dashboard) -> 2.3 (subdominio),
+  pois 2.2 depende de 2.1 estar funcionando.
+dependencies:
+  - story 2.2 requer story 2.1 concluida (auth necessario para dashboard)
+  - story 2.3 pode ser paralela ou posterior
+consumed: true
+created_at: 2026-07-28T16:35:00-03:00

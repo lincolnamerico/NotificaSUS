@@ -1,0 +1,30 @@
+schema: 1
+story: '2.1'
+story_title: 'Autenticação OAuth Google'
+gate: PASS
+status_reason: 'All acceptance criteria met. OAuth flow, domain restriction, auto-registro, middleware protection, and session management implemented and tested.'
+reviewer: 'Quinn (Test Architect)'
+reviewed_revision: 'commit:76debd24d58b059b382229edf1d0e1c8b2bde228'
+updated: '2026-07-28T17:30:00Z'
+top_issues: []
+waiver: { active: false }
+quality_score: 100
+evidence:
+  tests_reviewed: 44
+  risks_identified: 0
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6, 7, 8]
+    ac_gaps: []
+nfr_validation:
+  security:
+    status: PASS
+    notes: 'OAuth flow with domain restriction @pinhais.pr.gov.br, session via NextAuth with 24h configurable expiry'
+  performance:
+    status: PASS
+    notes: 'No performance concerns - auth redirect and middleware are lightweight'
+  reliability:
+    status: PASS
+    notes: 'Error handling for invalid domains, session expiry, and logout flows'
+  maintainability:
+    status: PASS
+    notes: 'Clean auth.ts with callbacks, reusable middleware pattern'

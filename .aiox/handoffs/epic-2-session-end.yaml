@@ -1,0 +1,27 @@
+from_agent: po
+to_agent: po
+handoff_type: session-end
+epic: 2
+epic_title: "Dashboard & Gestao"
+story_count: 3
+stories_created:
+  - 2.1-autenticacao-oauth-google (Draft)
+  - 2.2-dashboard-kpis-por-usf (Draft)
+  - 2.3-subdominio-segregado (Draft)
+summary: >
+  Epic 2 iniciada. SM (River) criou as 3 stories em Draft.
+  PO (Pax) estava prestes a validar as stories quando a sessao foi encerrada.
+
+  Proximo passo: PO validar as 3 stories (Draft -> Ready)
+  via *validate-story-draft para cada uma, depois chamar @dev para implementar.
+context_files:
+  - docs/stories/2.1-autenticacao-oauth-google.md
+  - docs/stories/2.2-dashboard-kpis-por-usf.md
+  - docs/stories/2.3-subdominio-segregado.md
+  - docs/prd.md
+  - docs/architecture.md
+next_action: >
+  PO (Pax) validar stories 2.1, 2.2 e 2.3 com *validate-story-draft.
+  Apos aprovacao, chamar @dev (Dex) para implementar com *develop.
+consumed: true
+created_at: 2026-07-28T16:30:00-03:00

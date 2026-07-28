@@ -83,6 +83,28 @@ src/
 └── utils/                       # Gerador de protocolo
 ```
 
+## Subdomínio Gestão
+
+Em produção, o dashboard gerencial opera em subdomínio separado (`gestao.pinhais.pr.gov.br`) para isolar a área administrativa do formulário público.
+
+### Configuração de DNS
+
+1. Adicione um registro CNAME em `gestao.pinhais.pr.gov.br` apontando para `cname.vercel-dns.com`
+2. No Vercel, adicione o domínio `gestao.pinhais.pr.gov.br` ao projeto
+3. Configure a variável de ambiente:
+   - `GESTAO_URL=https://gestao.pinhais.pr.gov.br`
+   - `NEXT_PUBLIC_GESTAO_URL=https://gestao.pinhais.pr.gov.br`
+
+### Comportamento em Desenvolvimento
+
+Em dev local (`localhost`), `/gestao/*` funciona normalmente sem subdomínio.
+Os redirects condicionais e `assetPrefix` só são ativados em produção.
+
+### Cookies
+
+O cookie de sessão NextAuth usa `domain: .pinhais.pr.gov.br` para funcionar
+entre o domínio principal e o subdomínio de gestão.
+
 ## API
 
 ### `GET /api/usf`
