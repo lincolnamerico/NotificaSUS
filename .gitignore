@@ -42,3 +42,8 @@ coverage/
 
 # os
 Thumbs.db
+
+# google oauth credentials (never commit)
+client_secret_*.json
+
+.vercel
