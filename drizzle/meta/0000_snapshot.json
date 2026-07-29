@@ -1,0 +1,299 @@
+{
+  "id": "4d82d5f2-4b23-40fd-95cd-11f8e8a33f22",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.notificacao": {
+      "name": "notificacao",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "protocolo": {
+          "name": "protocolo",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "usf_id": {
+          "name": "usf_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tipo_incidente": {
+          "name": "tipo_incidente",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "classificacao_incidente": {
+          "name": "classificacao_incidente",
+          "type": "classificacao_incidente",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "local_especifico": {
+          "name": "local_especifico",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "data_hora": {
+          "name": "data_hora",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "descricao": {
+          "name": "descricao",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "grau_dano": {
+          "name": "grau_dano",
+          "type": "grau_dano",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "severidade": {
+          "name": "severidade",
+          "type": "severidade",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "acoes_tomadas": {
+          "name": "acoes_tomadas",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "anonimo": {
+          "name": "anonimo",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "notificacao_usf_id_usf_id_fk": {
+          "name": "notificacao_usf_id_usf_id_fk",
+          "tableFrom": "notificacao",
+          "tableTo": "usf",
+          "columnsFrom": [
+            "usf_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "notificacao_protocolo_unique": {
+          "name": "notificacao_protocolo_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "protocolo"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.usf": {
+      "name": "usf",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nome": {
+          "name": "nome",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "endereco": {
+          "name": "endereco",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ativo": {
+          "name": "ativo",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "usf_slug_unique": {
+          "name": "usf_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.usuario": {
+      "name": "usuario",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nome": {
+          "name": "nome",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "papel": {
+          "name": "papel",
+          "type": "papel",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'gestor'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "usuario_email_unique": {
+          "name": "usuario_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.classificacao_incidente": {
+      "name": "classificacao_incidente",
+      "schema": "public",
+      "values": [
+        "queda",
+        "medicacao",
+        "infeccao",
+        "procedimento",
+        "equipamento",
+        "comunicacao",
+        "sangue",
+        "nutricao",
+        "pele",
+        "outro"
+      ]
+    },
+    "public.grau_dano": {
+      "name": "grau_dano",
+      "schema": "public",
+      "values": [
+        "leve",
+        "moderado",
+        "grave",
+        "obito"
+      ]
+    },
+    "public.papel": {
+      "name": "papel",
+      "schema": "public",
+      "values": [
+        "admin",
+        "gestor",
+        "visualizador"
+      ]
+    },
+    "public.severidade": {
+      "name": "severidade",
+      "schema": "public",
+      "values": [
+        "baixa",
+        "media",
+        "alta",
+        "critica"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

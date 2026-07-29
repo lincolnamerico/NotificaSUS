@@ -2,6 +2,26 @@ import { pgTable, uuid, varchar, text, boolean, timestamp, pgEnum } from "drizzl
 
 export const grauDanoEnum = pgEnum("grau_dano", ["leve", "moderado", "grave", "obito"]);
 
+export const classificacaoIncidenteEnum = pgEnum("classificacao_incidente", [
+  "queda",
+  "medicacao",
+  "infeccao",
+  "procedimento",
+  "equipamento",
+  "comunicacao",
+  "sangue",
+  "nutricao",
+  "pele",
+  "outro",
+]);
+
+export const severidadeEnum = pgEnum("severidade", [
+  "baixa",
+  "media",
+  "alta",
+  "critica",
+]);
+
 export const papelEnum = pgEnum("papel", ["admin", "gestor", "visualizador"]);
 
 export const usf = pgTable("usf", {
@@ -18,9 +38,12 @@ export const notificacao = pgTable("notificacao", {
   protocolo: varchar("protocolo", { length: 20 }).unique().notNull(),
   usfId: uuid("usf_id").notNull().references(() => usf.id),
   tipoIncidente: varchar("tipo_incidente", { length: 100 }).notNull(),
+  classificacaoIncidente: classificacaoIncidenteEnum("classificacao_incidente"),
+  localEspecifico: varchar("local_especifico", { length: 200 }),
   dataHora: timestamp("data_hora", { withTimezone: true }).notNull(),
   descricao: text("descricao").notNull(),
   grauDano: grauDanoEnum("grau_dano").notNull(),
+  severidade: severidadeEnum("severidade"),
   acoesTomadas: text("acoes_tomadas"),
   anonimo: boolean("anonimo").default(true),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),

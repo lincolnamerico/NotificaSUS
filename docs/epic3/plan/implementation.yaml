@@ -1,0 +1,196 @@
+storyId: "EPIC-3"
+createdAt: "2026-07-29T10:00:00-03:00"
+createdBy: "@architect"
+status: pending
+complexity: SIMPLE
+estimatedEffort: "2-3 dias"
+
+dependencies:
+  - name: recharts
+    version: "^2.x"
+    purpose: Biblioteca de graficos React (barras, pizza, linha)
+  - name: "@tanstack/react-query"
+    version: "^5.x"
+    purpose: Data fetching e cache para dashboard
+
+phases:
+  - id: phase-1
+    name: "Database & Backend"
+    description: "Estender schema, criar servicos de agregacao, exportacao e estender middleware de anonimizacao"
+    subtasks:
+      - id: "1.1"
+        description: "Estender tabela notificacao com campos classificacao_incidente e severidade"
+        service: database
+        files:
+          - src/lib/db/schema.ts
+          - drizzle/0002_add_classificacao_severidade.sql
+        verification:
+          type: command
+          command: npx drizzle-kit push
+        status: pending
+        notes: "Adicionar colunas opcionais para nao quebrar registros existentes"
+
+      - id: "1.2"
+        description: "Criar servico de agregacao com queries SQL para graficos estratificados"
+        service: backend
+        files:
+          - src/lib/services/agregacao.ts
+        verification:
+          type: command
+          command: npm run typecheck
+        status: pending
+        dependencies: ["1.1"]
+        notes: "COUNT + GROUP BY por USF, tipo, classificacao, severidade com filtro por periodo"
+
+      - id: "1.3"
+        description: "Criar API GET /api/gestao/dashboard/graficos com dados agregados"
+        service: backend
+        files:
+          - src/app/api/gestao/dashboard/graficos/route.ts
+        verification:
+          type: api
+          url: "http://localhost:3000/api/gestao/dashboard/graficos?usf=all&periodo=30"
+          expectedStatus: 200
+        status: pending
+        dependencies: ["1.2"]
+        notes: "Protegida por auth, retorna JSON com dados agregados"
+
+      - id: "1.4"
+        description: "Estender middleware de anonimizacao para suportar exportacao de dados"
+        service: backend
+        files:
+          - src/lib/middleware/anonimizacao.ts
+          - src/lib/services/exportacao.ts
+        verification:
+          type: command
+          command: npm run typecheck
+        status: pending
+        notes: "Reaproveitar logica existente de stripping de PII para aplicar em arrays de notificacoes"
+
+      - id: "1.5"
+        description: "Criar API GET /api/gestao/exportar/dados com geracao de CSV/JSON e anonimizacao"
+        service: backend
+        files:
+          - src/app/api/gestao/exportar/dados/route.ts
+        verification:
+          type: api
+          url: "http://localhost:3000/api/gestao/exportar/dados?formato=csv&periodo=30"
+          expectedStatus: 200
+        status: pending
+        dependencies: ["1.4"]
+        notes: "Header Content-Disposition para download, aplicar middleware de anonimizacao antes de serializar"
+
+  - id: phase-2
+    name: "Frontend - Graficos & Exportacao"
+    description: "Criar componentes de grafico, filtros, painel de exportacao e integrar ao dashboard existente"
+    subtasks:
+      - id: "2.1"
+        description: "Criar componente de loading skeleton padrao para estados de carregamento"
+        service: frontend
+        files:
+          - src/components/ui/loading-skeleton.tsx
+        verification:
+          type: command
+          command: npm run typecheck
+        status: pending
+
+      - id: "2.2"
+        description: "Criar componentes de grafico (barras, pizza, linha) com Recharts"
+        service: frontend
+        files:
+          - src/components/dashboard/grafico-barras.tsx
+          - src/components/dashboard/grafico-pizza.tsx
+          - src/components/dashboard/grafico-linha.tsx
+        verification:
+          type: command
+          command: npm run typecheck
+        status: pending
+        notes: "Cada componente aceita dados via props e exibe loading skeleton state (NFR-1)"
+
+      - id: "2.3"
+        description: "Criar componente de filtros combinados (USF, periodo, tipo, severidade)"
+        service: frontend
+        files:
+          - src/components/dashboard/filtros-dashboard.tsx
+        verification:
+          type: command
+          command: npm run typecheck
+        status: pending
+
+      - id: "2.4"
+        description: "Criar painel de exportacao com confirmacao LGPD e selecao de formato"
+        service: frontend
+        files:
+          - src/components/dashboard/painel-exportacao.tsx
+        verification:
+          type: command
+          command: npm run typecheck
+        status: pending
+        notes: "Modal/drawer com checkbox de confirmacao de anonimizacao, select formato CSV/JSON"
+
+      - id: "2.5"
+        description: "Integrar componentes de grafico, filtros e exportacao na pagina de dashboard existente"
+        service: frontend
+        files:
+          - src/app/gestao/dashboard/page.tsx
+        verification:
+          type: browser
+          url: "http://localhost:3000/gestao/dashboard"
+          actions:
+            - "Verificar graficos carregam com dados"
+            - "Verificar filtros funcionam"
+            - "Verificar botao de exportacao"
+        status: pending
+        dependencies: ["2.2", "2.3", "2.4"]
+        notes: "Usar React Query para data fetching, implementar estados de loading (NFR-1), vazio (EC-1) e erro (EC-2)"
+
+  - id: phase-3
+    name: "Testes & Qualidade"
+    description: "Testes unitarios, de integracao e validacao de conformidade LGPD"
+    subtasks:
+      - id: "3.1"
+        description: "Escrever testes unitarios para servico de agregacao e exportacao"
+        service: backend
+        files:
+          - src/lib/services/__tests__/agregacao.test.ts
+          - src/lib/services/__tests__/exportacao.test.ts
+        verification:
+          type: command
+          command: npm test -- --grep "agregacao|exportacao"
+        status: pending
+        dependencies: ["1.5"]
+
+      - id: "3.2"
+        description: "Escrever testes de integracao para rotas de API de graficos e exportacao"
+        service: backend
+        files:
+          - src/app/api/gestao/dashboard/__tests__/graficos.test.ts
+          - src/app/api/gestao/exportar/__tests__/dados.test.ts
+        verification:
+          type: command
+          command: npm test -- --grep "gestao"
+        status: pending
+        dependencies: ["3.1"]
+
+      - id: "3.3"
+        description: "Escrever teste de conformidade LGPD validando anonimizacao na exportacao"
+        service: backend
+        files:
+          - src/lib/middleware/__tests__/anonimizacao-exportacao.test.ts
+        verification:
+          type: command
+          command: npm test -- --grep "lgpd|anonimizacao"
+        status: pending
+        dependencies: ["3.1"]
+        notes: "Verificar que nome, winsaude e dt_nascimento sao removidos dos dados exportados (NFR-3)"
+
+      - id: "3.4"
+        description: "Rodar lint, typecheck e build de producao"
+        service: infra
+        files: []
+        verification:
+          type: command
+          command: npm run lint && npm run typecheck && npm run build
+        status: pending
+        dependencies: ["2.5", "3.3"]
+        notes: "Gate de qualidade final antes de entregar"

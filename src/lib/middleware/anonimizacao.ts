@@ -68,3 +68,37 @@ export function sanitizarPayload(
     anonimo: payload.anonimo,
   };
 }
+
+const CAMPOS_PACIENTE = [
+  "nome_paciente",
+  "paciente_nome",
+  "nome",
+  "codigo_winsaude",
+  "winsaude",
+  "data_nascimento",
+  "dt_nascimento",
+  "data_nasc",
+  "cpf",
+  "rg",
+  "telefone",
+  "email_paciente",
+  "endereco_paciente",
+];
+
+export function anonimizarExportacao(
+  registro: Record<string, unknown>
+): Record<string, unknown> {
+  const sanitizado = { ...registro };
+  for (const campo of CAMPOS_PACIENTE) {
+    if (campo in sanitizado) {
+      sanitizado[campo] = "[REDACTED]";
+    }
+  }
+  return sanitizado;
+}
+
+export function anonimizarListaExportacao(
+  registros: Record<string, unknown>[]
+): Record<string, unknown>[] {
+  return registros.map(anonimizarExportacao);
+}

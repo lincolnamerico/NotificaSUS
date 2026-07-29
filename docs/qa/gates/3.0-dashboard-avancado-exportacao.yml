@@ -1,0 +1,13 @@
+schema: 1
+story: '3.0'
+gate: PASS
+status_reason: >
+  Epic 3 (Dashboard Avançado & Exportação) completo:
+  schema estendido, serviços de agregação/exportação com anonimização LGPD,
+  APIs REST protegidas por RBAC, componentes Recharts com loading/empty states,
+  81 testes passando, lint e typecheck limpos.
+reviewer: 'Quinn'
+reviewed_revision: 'commit:d47cbbe + uncommitted Epic 3 changes'
+updated: '2026-07-29T16:50:00Z'
+top_issues: []
+waiver: { active: false }

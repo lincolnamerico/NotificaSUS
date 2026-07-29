@@ -1,0 +1,212 @@
+{
+  "storyId": "EPIC-3",
+  "gatheredAt": "2026-07-29T10:00:00-03:00",
+  "source": "user",
+  "gatheredBy": "@pm",
+  "elicitationVersion": "2.0",
+
+  "functional": [
+    {
+      "id": "FR-1",
+      "description": "Dashboard com graficos estratificados por USF, local especifico, tipo de incidente, classificacao do incidente e severidade do incidente",
+      "priority": "P0",
+      "rationale": "Permitir que a Comissao de Seguranca do Paciente visualize padroes e tendencias dos incidentes notificados",
+      "acceptance": ["AC-1"]
+    },
+    {
+      "id": "FR-2",
+      "description": "Exportacao manual de dados em formato CSV/JSON com anonimizacao de dados sensiveis do paciente",
+      "priority": "P0",
+      "rationale": "Preparar terreno para futura integracao automatizada com o sistema NotiVISA da ANVISA",
+      "acceptance": ["AC-2"]
+    },
+    {
+      "id": "FR-3",
+      "description": "Estruturar modelo de dados e permissoes para futuro workflow da Comissao de Seguranca do Paciente (validacao, reclassificacao, confirmacao de severidade)",
+      "priority": "P1",
+      "rationale": "Comissao atuara em etapas posteriores ao registro da notificacao como atores do processo",
+      "acceptance": ["AC-3"]
+    }
+  ],
+
+  "nonFunctional": [
+    {
+      "id": "NFR-1",
+      "category": "usability",
+      "description": "Graficos devem exibir indicador de carregamento (loading state / barra de progresso) enquanto sao montados na tela",
+      "metric": "Loading state visivel em < 500ms apos acionamento"
+    },
+    {
+      "id": "NFR-2",
+      "category": "performance",
+      "description": "Tempo de resposta para renderizacao dos graficos nao deve exceder 10 segundos, com feedback visual continuo",
+      "metric": "Grafico renderizado em <= 10s com loading state"
+    },
+    {
+      "id": "NFR-3",
+      "category": "security",
+      "description": "Dados sensiveis do paciente (Nome, Codigo Winsaude, Data de Nascimento) devem ser anonimizados antes da exportacao",
+      "metric": "Zero vazamento de PII nos arquivos exportados"
+    }
+  ],
+
+  "constraints": [
+    {
+      "id": "CON-1",
+      "type": "regulatory",
+      "description": "LGPD compliance obrigatoria — anonimizacao de dados pessoais do paciente em qualquer exportacao",
+      "impact": "Middleware de anonimizacao deve ser estendido para cobrir exportacao, nao apenas persistencia"
+    },
+    {
+      "id": "CON-2",
+      "type": "technical",
+      "description": "Stack atual (Next.js App Router, Neon PostgreSQL, Tailwind CSS) deve ser mantida",
+      "impact": "Bibliotecas de grafico devem ser compativeis com React/Next.js Server Components"
+    },
+    {
+      "id": "CON-3",
+      "type": "business",
+      "description": "Exportacao inicial sera manual — automacao via job agendado sera implementada em versao futura",
+      "impact": "UI de exportacao manual com filtros e confirmacao LGPD"
+    }
+  ],
+
+  "assumptions": [
+    {
+      "id": "ASM-1",
+      "description": "Comissao de Seguranca do Paciente acessara o dashboard em versao futura (workflow ainda nao implementado)",
+      "risk_if_wrong": "Arquitetura pode precisar de refactor se permissoes e papeis forem muito diferentes do previsto",
+      "validation_needed": true
+    },
+    {
+      "id": "ASM-2",
+      "description": "Schema de exportacao atual nao precisa ser 100% compativel com NotiVISA — compatibilidade total sera alcancada na versao automatizada futura",
+      "risk_if_wrong": "Necessidade de refatorar exportacao se o schema NotiVISA for muito diferente",
+      "validation_needed": true
+    },
+    {
+      "id": "ASM-3",
+      "description": "Volume de dados atual comporta consultas agregadas em tempo real sem necessidade de pre-agregacao ou cache",
+      "risk_if_wrong": "Performance pode degradar com crescimento do banco, exigindo materialized views ou cache",
+      "validation_needed": false
+    }
+  ],
+
+  "domainModel": [
+    {
+      "entity": "Notificacao",
+      "attributes": ["id", "protocolo", "usf_id", "tipo_incidente", "classificacao_incidente", "data_hora", "descricao", "grau_dano", "severidade", "acoes_tomadas", "anonimo", "created_at"],
+      "relationships": [
+        {"type": "belongs_to", "target": "USF"},
+        {"type": "has_many", "target": "HistoricoComissao"}
+      ]
+    },
+    {
+      "entity": "USF (Unidade de Saude da Familia)",
+      "attributes": ["id", "slug", "nome", "endereco", "local_especifico", "ativo"],
+      "relationships": [
+        {"type": "has_many", "target": "Notificacao"}
+      ]
+    },
+    {
+      "entity": "ComissaoSeguranca (futuro)",
+      "attributes": ["id", "usuario_id", "notificacao_id", "acao", "reclassificacao", "severidade_confirmada", "created_at"],
+      "relationships": [
+        {"type": "belongs_to", "target": "Notificacao"},
+        {"type": "belongs_to", "target": "Usuario"}
+      ]
+    }
+  ],
+
+  "interactions": [
+    {
+      "id": "INT-1",
+      "trigger": "Gestor acessa dashboard",
+      "flow": ["Login OAuth Google", "Redirecionamento para dashboard", "Selecao de filtros (USF, periodo, tipo)", "Renderizacao de graficos com loading state", "Visualizacao de dados estratificados"],
+      "states": {
+        "loading": "Spinner/skeleton enquanto graficos carregam",
+        "error": "Mensagem amigavel + botao de tentar novamente",
+        "empty": "Ilustracao + mensagem 'Nenhuma notificacao registrada no periodo'"
+      }
+    },
+    {
+      "id": "INT-2",
+      "trigger": "Gestor solicita exportacao",
+      "flow": ["Acessa painel de exportacao", "Seleciona filtros (periodo, USF, tipo)", "Confirma anonimizacao LGPD", "Download do arquivo CSV/JSON"],
+      "states": {
+        "loading": "Barra de progresso durante geracao do arquivo",
+        "error": "Mensagem de erro com detalhes e suporte",
+        "empty": "Mensagem 'Nenhum dado para exportar no periodo selecionado'"
+      }
+    }
+  ],
+
+  "edgeCases": [
+    {
+      "id": "EC-1",
+      "scenario": "Banco de dados sem notificacoes no periodo selecionado",
+      "handling": "Exibir estado vazio com ilustracao e mensagem clara, sem quebrar a UI",
+      "severity": "low"
+    },
+    {
+      "id": "EC-2",
+      "scenario": "Falha na consulta ao banco (timeout ou erro)",
+      "handling": "Retry automatico (1 tentativa) + fallback para mensagem de erro amigavel + botao 'Tentar novamente'",
+      "severity": "high"
+    },
+    {
+      "id": "EC-3",
+      "scenario": "Exportacao com volume grande de dados (> 10k registros)",
+      "handling": "Processamento em background com notificacao quando pronto, ou paginacao da exportacao",
+      "severity": "medium"
+    },
+    {
+      "id": "EC-4",
+      "scenario": "Usuario nao autenticado tenta acessar dashboard",
+      "handling": "Redirecionamento para tela de login OAuth Google",
+      "severity": "critical"
+    },
+    {
+      "id": "EC-5",
+      "scenario": "Usuario sem permissao (visualizador) tenta exportar dados",
+      "handling": "Desabilitar botao de exportacao com tooltip explicativo 'Contate o administrador'",
+      "severity": "medium"
+    }
+  ],
+
+  "terminology": [
+    {
+      "term": "Notificacao",
+      "definition": "Registro de incidente ou evento adverso relacionado a seguranca do paciente",
+      "synonyms": ["registro", "ocorrencia"],
+      "avoid": ["denuncia", "reclamacao"]
+    },
+    {
+      "term": "Comissao de Seguranca do Paciente",
+      "definition": "Comissao municipal responsavel por validar, reclassificar e confirmar severidade dos danos aos pacientes",
+      "synonyms": ["comissao", "gestores"],
+      "avoid": []
+    },
+    {
+      "term": "Estratificacao",
+      "definition": "Agrupamento e visualizacao de dados por categorias (USF, tipo, severidade, etc.)",
+      "synonyms": ["agrupamento", "filtro categorico"],
+      "avoid": []
+    }
+  ],
+
+  "openQuestions": [
+    {
+      "id": "OQ-1",
+      "question": "Qual biblioteca de graficos utilizar? (Recharts, Chart.js, Nivo, Tremor?)",
+      "blocking": true,
+      "assignedTo": "@architect"
+    },
+    {
+      "id": "OQ-2",
+      "question": "Definir modelo de permissoes RBAC detalhado para acesso a dashboard e exportacao",
+      "blocking": false,
+      "assignedTo": "@architect"
+    }
+  ]
+}
