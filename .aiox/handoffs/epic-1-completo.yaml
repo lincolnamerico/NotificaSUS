@@ -48,5 +48,6 @@ context_files:
   - drizzle.config.ts
   - vitest.config.ts
   - package.json
-consumed: false
+consumed: true
+consumed_at: "2026-07-30T10:00:00-03:00"
 created_at: 2026-07-28T16:12:00-03:00

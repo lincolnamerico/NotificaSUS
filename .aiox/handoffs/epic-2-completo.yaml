@@ -1,0 +1,44 @@
+consumed: true
+consumed_at: "2026-07-30T10:00:00-03:00"
+created_at: "2026-07-28T17:45:00-03:00"
+from_agent: "@qa"
+last_command: close-story + devops push & merge
+
+summary:
+  epic: "Epic 2 — Dashboard & Gestão"
+  status: "COMPLETO"
+
+  stories:
+    - id: "2.1"
+      title: "Autenticação OAuth Google"
+      status: "Done"
+      gate: "PASS"
+      gate_file: "docs/qa/gates/2.1-autenticacao-oauth-google.yml"
+    - id: "2.2"
+      title: "Dashboard KPIs por USF"
+      status: "Done"
+      gate: "PASS"
+      gate_file: "docs/qa/gates/2.2-dashboard-kpis-por-usf.yml"
+    - id: "2.3"
+      title: "Subdomínio Segregado"
+      status: "Done"
+      gate: "PASS"
+      gate_file: "docs/qa/gates/2.3-subdominio-segregado.yml"
+
+  quality:
+    tests: "44/44 passando"
+    lint: "0 erros em src/"
+    typecheck: "limpo"
+    build: "compilado (2.4s)"
+
+  branch: "feat/2.1-autenticacao-oauth-google"
+  merge_commit: "d47cbbe"
+  pr: "#1 (merged squash)"
+  base_branch: "main"
+
+next_epic: "Epic 3 — a definir (sem stories criadas ainda)"
+next_agents_disponiveis:
+  - "@analyst (Atlas) — pesquisa/análise"
+  - "@pm (Morgan) — planejamento PRD"
+  - "@architect (Aria) — arquitetura"
+  - "@sm (River) — criação de stories"

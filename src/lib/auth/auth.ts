@@ -6,6 +6,7 @@ import { usuario } from "@/lib/db/schema";
 const isProd = process.env.NODE_ENV === "production";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
@@ -50,7 +51,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     sessionToken: {
       name: isProd ? "__Secure-authjs.session-token" : "authjs.session-token",
       options: {
-        domain: ".pinhais.pr.gov.br",
         httpOnly: true,
         sameSite: "lax",
         secure: isProd,

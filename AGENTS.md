@@ -26,20 +26,41 @@
 
 - `src/app/` — Next.js App Router pages + API routes
   - `notificar/` — Formulário público (page + confirmacao/)
-  - `gestao/` — Dashboard gerencial (empty, WIP)
+  - `gestao/` — Dashboard gerencial (login, dashboard, layout)
   - `api/notificar/` — POST /api/notificar
   - `api/usf/` — GET /api/usf
+  - `api/gestao/dashboard/` — KPIs + gráficos
+  - `api/gestao/exportar/dados/` — CSV/JSON export com LGPD
   - `api/auth/[...nextauth]/` — NextAuth v5 route handler
-- `src/lib/db/` — Drizzle schema (`schema.ts`) + connection (`index.ts`, Neon PostgreSQL)
+- `src/lib/db/` — Drizzle schema (`schema.ts`) + Neon connection (`index.ts`)
 - `src/lib/auth/` — NextAuth v5 config (Google OAuth, only @pinhais.pr.gov.br)
 - `src/lib/middleware/` — LGPD anonymization (`anonimizacao.ts`)
+- `src/lib/services/` — Agregação (`agregacao.ts`) + Exportação (`exportacao.ts`)
 - `src/components/formulario/` — 3-step form (tipo, descricao, revisao)
-- `src/components/ui/` — Shared UI (consentimento-lgpd)
+- `src/components/ui/` — Shared UI (consentimento-lgpd, loading-skeleton)
 - `src/utils/` — Protocolo generator (`protocolo.ts`, format `NOT-YYYYMMDD-XXXX`)
+- `src/middleware.ts` — Next.js root middleware, protege `/gestao/*` com NextAuth
 - `docs/stories/` — Numbered stories (e.g. `1.4-formulario-notificacao-3-passos.md`)
 - `docs/qa/gates/` — QA gate YAMLs
 - `drizzle/` — Generated migrations
-- `drizzle.config.ts` — Drizzle kit config (schema: `./src/lib/db/schema.ts`)
+- `drizzle.config.ts` — Drizzle kit config (dialect: postgresql, schema: `./src/lib/db/schema.ts`)
+
+### Test layout
+Tests are colocated in `__tests__/` next to source files. 11 test files total.
+
+**Key test file locations:**
+- `src/lib/middleware/__tests__/anonimizacao.test.ts` — LGPD middleware
+- `src/lib/db/__tests__/usf.test.ts` — USF queries
+- `src/lib/services/__tests__/agregacao.test.ts` — Aggregation service
+- `src/lib/services/__tests__/exportacao.test.ts` — Export service
+- `src/app/api/notificar/__tests__/route.test.ts` — POST /api/notificar
+- `src/app/api/usf/__tests__/route.test.ts` — GET /api/usf
+- `src/components/formulario/__tests__/formulario.test.tsx` — Form UX
+
+### DB driver split
+- **Runtime (serverless):** `@neondatabase/serverless` + `drizzle-orm/neon-http`
+- **CLI (drizzle-kit):** `pg` driver for local migrations/push
+- Connection: `src/lib/db/index.ts` exports `db` from `drizzle(sql, { schema })`
 <!-- AIOX-MANAGED-END: codebase -->
 
 <!-- AIOX-MANAGED-START: commands -->
@@ -53,12 +74,21 @@
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run test` | Vitest (modo run) |
 | `npm run test:watch` | Vitest (modo watch) |
-| `npx drizzle-kit push` | Aplica schema ao Neon PostgreSQL |
+| `npx drizzle-kit push` | Aplica schema ao Neon PostgreSQL (dev rápido) |
 | `npx drizzle-kit generate` | Gera migracoes a partir do schema |
+| `npx drizzle-kit migrate` | Aplica migracoes pendentes |
+
+### Vitest caveats
+- Test env defaults to `node` (`vitest.config.ts`). Component tests use `// @vitest-environment jsdom` pragma.
+- Tests colocated in `__tests__/` — vitest config includes `src/**/*.test.{ts,tsx}`
+- Path alias `@/` maps to `./src/*` (configured in both `tsconfig.json` and `vitest.config.ts`)
+
+### Database workflow
+- **Schema first:** Edit `src/lib/db/schema.ts` → run `npx drizzle-kit generate` → run `npx drizzle-kit migrate`
+- For rapid prototyping during dev: `npx drizzle-kit push` (no migration file created)
+- Existing migration: `drizzle/0000_abandoned_betty_ross.sql`
 
 Copy `.env.example` to `.env.local` and fill before running the project.
-
-DB schema lives at `src/lib/db/schema.ts`. Path alias `@/` maps to `./src/*`.
 <!-- AIOX-MANAGED-END: commands -->
 
 <!-- AIOX-MANAGED-START: shortcuts -->

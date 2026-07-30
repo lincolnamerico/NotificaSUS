@@ -1,0 +1,48 @@
+consumed: true
+consumed_at: "2026-07-30T10:00:00-03:00"
+created_at: "2026-07-29T18:00:00-03:00"
+from_agent: "@dev"
+last_command: deploy
+
+summary:
+  epic: "Epic 3 — Dashboard Avançado & Exportação"
+  status: "DEPLOYED"
+  stories:
+    - id: "3.0"
+      title: "Dashboard Avançado e Exportação"
+      status: "Done"
+      gate: "PASS"
+      gate_file: "docs/qa/gates/3.0-dashboard-avancado-exportacao.yml"
+  quality:
+    tests: "81+ passando"
+    lint: "0 erros em src/"
+    typecheck: "limpo"
+    build: "compilado"
+  branch: "main"
+  merge_commit: "3e6edef"
+  base_branch: "main"
+
+deploy:
+  platform: "Vercel"
+  url: "https://notificasus.vercel.app"
+  database: "Neon PostgreSQL"
+  auth: "Google OAuth (apenas @pinhais.pr.gov.br)"
+  accounts:
+    vercel: "lincolnamerico@gmail.com"
+    neon: "lincolnamerico@gmail.com"
+    google_cloud: "lincolnamerico@gmail.com"
+
+blocked:
+  - "Login dashboard sem email @pinhais.pr.gov.br — impossível testar OAuth"
+  - "Subdomínio gestão.pinhais.pr.gov.br — DNS não configurado"
+  - "QR Code — depende da Secretaria de Saúde"
+
+next_actions:
+  short_term:
+    - "Seed data: script de seed para USFs de Pinhais e dados de demonstração"
+    - "Testes E2E com Playwright para fluxo completo"
+    - "Testes de carga com k6 para 100+ acessos simultâneos"
+  medium_term:
+    - "Job semanal de exportação automática (Cron Vercel)"
+    - "Relatórios PDF periódicos"
+    - "Integração direta com NotiVISA (ANVISA)"
