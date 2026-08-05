@@ -7,9 +7,6 @@ import { PorUsf } from "@/components/dashboard/por-usf";
 import { PorGravidade } from "@/components/dashboard/por-gravidade";
 import { PorTipo } from "@/components/dashboard/por-tipo";
 import { VolumeTemporal } from "@/components/dashboard/volume-temporal";
-import { GraficoBarras } from "@/components/dashboard/grafico-barras";
-import { GraficoPizza } from "@/components/dashboard/grafico-pizza";
-import { GraficoLinha } from "@/components/dashboard/grafico-linha";
 import { PainelExportacao } from "@/components/dashboard/painel-exportacao";
 import { DashboardFiltros } from "@/components/dashboard/dashboard-filtros";
 import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
@@ -19,25 +16,9 @@ interface UsfOption {
   nome: string;
 }
 
-interface GraficosData {
-  kpis: {
-    totalNotificacoes: number;
-    totalGrave: number;
-    totalLeve: number;
-    anonimas: number;
-  };
-  porUsf: { usfId: string; total: number }[];
-  porTipo: { tipo: string; total: number }[];
-  porClassificacao: { classificacao: string | null; total: number }[];
-  porSeveridade: { severidade: string | null; total: number }[];
-  volumeTemporal: { data: string; total: number }[];
-}
-
 export default function DashboardPage() {
   const [data, setData] = useState<KpiData | null>(null);
-  const [graficosData, setGraficosData] = useState<GraficosData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [loadingGraficos, setLoadingGraficos] = useState(true);
   const [usfId, setUsfId] = useState("");
   const [periodo, setPeriodo] = useState("30d");
   const [usfs, setUsfs] = useState<UsfOption[]>([]);
@@ -53,7 +34,13 @@ export default function DashboardPage() {
         const res = await fetch(`/api/gestao/dashboard/kpis?${params}`);
         if (res.ok) {
           const json = await res.json();
-          setData(json);
+          setData({
+            total: json.total ?? { hoje: 0, "7d": 0, "30d": 0 },
+            porUsf: Array.isArray(json.porUsf) ? json.porUsf : [],
+            porGravidade: json.porGravidade ?? {},
+            porTipo: Array.isArray(json.porTipo) ? json.porTipo : [],
+            volumeTemporal: Array.isArray(json.volumeTemporal) ? json.volumeTemporal : [],
+          });
         }
       } finally {
         setLoading(false);
@@ -64,33 +51,10 @@ export default function DashboardPage() {
   }, [usfId, periodo]);
 
   useEffect(() => {
-    const fetchGraficos = async () => {
-      setLoadingGraficos(true);
-      try {
-        const params = new URLSearchParams();
-        if (usfId) params.set("usf_id", usfId);
-        const periodoNum = periodo === "hoje" ? "1" : periodo.replace("d", "");
-        params.set("periodo", periodoNum);
-
-        const res = await fetch(
-          `/api/gestao/dashboard/graficos?${params}`
-        );
-        if (res.ok) {
-          const json = await res.json();
-          setGraficosData(json);
-        }
-      } finally {
-        setLoadingGraficos(false);
-      }
-    };
-
-    fetchGraficos();
-  }, [usfId, periodo]);
-
-  useEffect(() => {
     fetch("/api/usf")
-      .then((r) => r.json())
-      .then((list) => setUsfs(list));
+      .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
+      .then((list) => setUsfs(Array.isArray(list) ? list : []))
+      .catch(() => setUsfs([]));
   }, []);
 
   return (
@@ -129,44 +93,6 @@ export default function DashboardPage() {
           <h2 className="pt-4 text-lg font-semibold text-primary">
             Estratificação
           </h2>
-
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <GraficoBarras
-              titulo="Notificações por USF"
-              dados={(graficosData?.porUsf ?? []).map((d) => ({
-                label: d.usfId.slice(0, 8),
-                valor: d.total,
-              }))}
-              loading={loadingGraficos}
-            />
-            <GraficoPizza
-              titulo="Por Classificação"
-              dados={(graficosData?.porClassificacao ?? []).map((d) => ({
-                label: d.classificacao ?? "Sem classificação",
-                valor: d.total,
-              }))}
-              loading={loadingGraficos}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <GraficoPizza
-              titulo="Por Severidade"
-              dados={(graficosData?.porSeveridade ?? []).map((d) => ({
-                label: d.severidade ?? "Sem severidade",
-                valor: d.total,
-              }))}
-              loading={loadingGraficos}
-            />
-            <GraficoLinha
-              titulo="Volume Temporal"
-              dados={(graficosData?.volumeTemporal ?? []).map((d) => ({
-                data: d.data,
-                valor: d.total,
-              }))}
-              loading={loadingGraficos}
-            />
-          </div>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
             <PainelExportacao usfId={usfId} periodo={periodo} />

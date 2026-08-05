@@ -47,3 +47,5 @@ Thumbs.db
 client_secret_*.json
 
 .vercel
+
+.env*

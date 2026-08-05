@@ -2,8 +2,8 @@ interface VolumeTemporalProps {
   dados: { data: string; total: number }[];
 }
 
-export function VolumeTemporal({ dados }: VolumeTemporalProps) {
-  if (dados.length === 0) {
+export function VolumeTemporal({ dados = [] }: VolumeTemporalProps) {
+  if (!Array.isArray(dados) || dados.length === 0) {
     return (
       <div className="rounded-lg border border-primary/10 bg-white p-4 shadow-sm">
         <h3 className="mb-3 text-sm font-semibold text-primary">

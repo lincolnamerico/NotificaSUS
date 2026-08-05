@@ -2,7 +2,8 @@ interface PorTipoProps {
   dados: { tipoIncidente: string; total: number }[];
 }
 
-export function PorTipo({ dados }: PorTipoProps) {
+export function PorTipo({ dados = [] }: PorTipoProps) {
+  if (!Array.isArray(dados) || dados.length === 0) return null;
   const maxTotal = Math.max(...dados.map((d) => d.total), 1);
 
   return (

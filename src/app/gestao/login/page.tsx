@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "@/lib/auth/auth";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 function Brasao() {

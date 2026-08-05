@@ -1,7 +1,5 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import { db } from "@/lib/db";
-import { usuario } from "@/lib/db/schema";
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -14,25 +12,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ profile }) {
-      if (!profile?.email?.endsWith("@pinhais.pr.gov.br")) {
-        return false;
-      }
-
-      const email = profile.email;
-      const nome = profile.name ?? email.split("@")[0];
-
-      await db
-        .insert(usuario)
-        .values({ email, nome, papel: "gestor" })
-        .onConflictDoUpdate({ target: usuario.email, set: { nome } });
-
+    authorized({ request, auth }) {
+      const { pathname } = request.nextUrl;
+      if (pathname === "/gestao/login") return true;
+      return !!auth;
+    },
+    async signIn() {
       return true;
     },
-    async jwt({ token, profile }) {
+    async jwt({ token, user, profile }) {
       if (profile) {
         token.email = profile.email;
         token.name = profile.name;
+      } else if (user) {
+        token.email = user.email;
+        token.name = user.name;
       }
       return token;
     },

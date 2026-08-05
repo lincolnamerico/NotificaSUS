@@ -2,7 +2,8 @@ interface PorUsfProps {
   dados: { nome: string; total: number }[];
 }
 
-export function PorUsf({ dados }: PorUsfProps) {
+export function PorUsf({ dados = [] }: PorUsfProps) {
+  if (!Array.isArray(dados) || dados.length === 0) return null;
   const maxTotal = Math.max(...dados.map((d) => d.total), 1);
 
   return (

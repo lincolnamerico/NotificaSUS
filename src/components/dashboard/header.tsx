@@ -1,6 +1,6 @@
 "use client";
 
-import { signOut } from "@/lib/auth/auth";
+import { signOut } from "next-auth/react";
 
 interface DashboardHeaderProps {
   nome: string;
