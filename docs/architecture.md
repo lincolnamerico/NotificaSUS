@@ -1,7 +1,7 @@
 # NotificaSUS Fullstack Architecture Document
 
-**Versao:** 1.1
-**Data:** 2026-07-29
+**Versao:** 1.2
+**Data:** 2026-07-30
 **Autor:** @architect (Aria)
 **Status:** Active (v1.0 deployed at https://notificasus.vercel.app)
 
@@ -17,6 +17,7 @@ N/A — Greenfield project.
 |------|--------|-----------|-------|
 | 2026-07-28 | 1.0 | Versao inicial da arquitetura | @architect (Aria) |
 | 2026-07-29 | 1.1 | Deploy Vercel + Neon + Google OAuth configurados; Epic 3 (graficos Recharts, exportacao CSV/JSON, anonimizacao exportacao, RBAC) documentado | @dev |
+| 2026-07-30 | 1.2 | Login OAuth confirmado funcional; crash dashboard corrigido (safe defaults + componentes defensivos); allowlist adicionada; signIn callback em bypass temporario | @dev |
 
 ## 2. High Level Architecture
 
@@ -170,7 +171,8 @@ CREATE INDEX idx_usf_slug ON usf(slug);
 - `GET /api/gestao/exportar/dados` — Exportar dados CSV/JSON com anonimizacao LGPD (RBAC: visualizador bloqueado)
 
 ### Autenticacao
-OAuth 2.0 com Google Workspace, restrito a @pinhais.pr.gov.br.
+OAuth 2.0 com Google Workspace, restrito a @pinhais.pr.gov.br + allowlist (lincoln.americo@gmail.com).
+signIn callback atualmente em bypass temporário (return true) durante depuração.
 
 ## 7. Project Structure
 
@@ -331,6 +333,7 @@ notificasus/
 | AUTH_SECRET | (gerado via npx auth secret, no .env.local) |
 | AUTH_GOOGLE_ID | Google Cloud Console |
 | AUTH_GOOGLE_SECRET | Google Cloud Console |
+| AUTH_URL | `https://notificasus.vercel.app` (adicionado 2026-07-30) |
 
 ### Neon Database
 - Host: (configurado no .env.local e Vercel)
@@ -347,8 +350,10 @@ notificasus/
 ### Google OAuth
 - Client ID: (configurado no .env.local e Vercel)
 - Redirect URI: https://notificasus.vercel.app/api/auth/callback/google
-- Dominio restrito: @pinhais.pr.gov.br
+- Dominio restrito: @pinhais.pr.gov.br + allowlist lincoln.americo@gmail.com
 - Console: https://console.cloud.google.com/apis/credentials
+- AUTH_URL: https://notificasus.vercel.app (adicionado 2026-07-30)
+- signIn callback: atualmente bypassado (return true) — reativar allowlist na proxima sessao
 
 ## 11. Core Workflows
 

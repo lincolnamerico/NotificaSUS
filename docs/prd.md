@@ -1,7 +1,7 @@
 # NotificaSUS Product Requirements Document (PRD)
 
-**Versao:** 1.1
-**Data:** 2026-07-29
+**Versao:** 1.2
+**Data:** 2026-07-30
 **Autor:** @pm (Morgan)
 **Status:** Active (v1.0 deployed)
 
@@ -21,7 +21,7 @@ A Secretaria de Saude de Pinhais/PR precisa de um sistema web para registro de i
 - **URL:** https://notificasus.vercel.app
 - **Plataforma:** Vercel (gegpo/notificasus)
 - **Banco:** Neon PostgreSQL (conta lincolnamerico@gmail.com)
-- **Auth Google:** Client ID configurado (lincolnamerico@gmail.com)
+- **Auth Google:** Client ID configurado (lincolnamerico@gmail.com), allowlist lincoln.americo@gmail.com + @pinhais.pr.gov.br
 - **Repo:** https://github.com/lincolnamerico/NotificaSUS
 
 ### Environment Variables (Vercel Production)
@@ -31,12 +31,14 @@ A Secretaria de Saude de Pinhais/PR precisa de um sistema web para registro de i
 | AUTH_SECRET | Gerado via `npx auth secret` |
 | AUTH_GOOGLE_ID | Google Cloud Console |
 | AUTH_GOOGLE_SECRET | Google Cloud Console |
+| AUTH_URL | `https://notificasus.vercel.app` (adicionado 2026-07-30) |
 
 ### Change Log
 | Data | Versao | Descricao | Autor |
 |------|--------|-----------|-------|
 | 2026-07-28 | 1.0 | Versao inicial do PRD | @pm (Morgan) |
 | 2026-07-29 | 1.1 | Todas as Epics 1-3 completas; deploy Vercel + Neon + Google OAuth configurados; docs atualizadas | @dev |
+| 2026-07-30 | 1.2 | Login OAuth confirmado funcional (multi-dispositivo); crash dashboard corrigido (safe defaults + componentes defensivos); allowlist lincoln.americo@gmail.com adicionada; signIn callback temporariamente em bypass | @dev |
 
 ## 2. Requirements
 
@@ -189,16 +191,26 @@ Presente em `C:\Users\lincoln.rodrigues\Desktop\antigravity\NotificaSUS\.env.loc
 - **Login Gestao:** https://notificasus.vercel.app/gestao/login
 - **Dashboard:** https://notificasus.vercel.app/gestao/dashboard
 
+### Confirmado (2026-07-30)
+- Login OAuth funcional em múltiplos dispositivos/navegadores
+- Sessão persiste entre páginas
+- Dashboard carrega sem crash após correções de safe defaults
+
 ### Bloqueado
-- Login com Google OAuth exige email `@pinhais.pr.gov.br` (dominio da prefeitura)
+- `signIn` callback temporariamente em bypass (`return true`) — reativar allowlist + restrição @pinhais.pr.gov.br
+- Recharts removido do dashboard (removido durante debug — readicionar)
+- QA gates não rodados nesta sessão
 - Dominio oficial da prefeitura (`pinhais.pr.gov.br/notificar`) depende da Secretaria de Saude
 - Vercel CLI nao autenticado para preview/development environments (apenas production)
 
 ### Proximos Passos
-1. **Job Semanal de Exportacao** — Cron via Vercel ou GitHub Actions para exportacao periodica
-2. **Relatorios PDF** — Geracao server-side de relatorios mensais
-3. **Integracao NotiVISA** — Mapeamento do schema ANVISA para exportacao direta
-4. **Workflow Comissao de Seguranca do Paciente** — Validacao, reclassificacao, confirmacao de severidade
-5. **Testes de Carga (k6)** — 100+ acessos simultaneos
-6. **E2E (Playwright)** — Fluxo completo QR Code → formulario → confirmacao
-7. **Deploy em dominio oficial** — Apos configuracao DNS da prefeitura
+1. **Restaurar signIn callback** com allowlist + restrição @pinhais.pr.gov.br
+2. **Restaurar Recharts** no dashboard com safe defaults
+3. **Rodar quality gates** (`npm run lint`, `npm run typecheck`, `npm run test`)
+4. **Job Semanal de Exportacao** — Cron via Vercel ou GitHub Actions para exportacao periodica
+5. **Relatorios PDF** — Geracao server-side de relatorios mensais
+6. **Integracao NotiVISA** — Mapeamento do schema ANVISA para exportacao direta
+7. **Workflow Comissao de Seguranca do Paciente** — Validacao, reclassificacao, confirmacao de severidade
+8. **Testes de Carga (k6)** — 100+ acessos simultaneos
+9. **E2E (Playwright)** — Fluxo completo QR Code → formulario → confirmacao
+10. **Deploy em dominio oficial** — Apos configuracao DNS da prefeitura
