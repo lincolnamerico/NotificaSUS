@@ -33,13 +33,15 @@
   - `api/gestao/exportar/dados/` — CSV/JSON export com LGPD
   - `api/auth/[...nextauth]/` — NextAuth v5 route handler
 - `src/lib/db/` — Drizzle schema (`schema.ts`) + Neon connection (`index.ts`)
-- `src/lib/auth/` — NextAuth v5 config (Google OAuth, only @pinhais.pr.gov.br)
+- `src/lib/auth/auth.ts` — NextAuth v5 config (Google OAuth). Proteção de `/gestao/*` NO `authorized()` callback + checagem `auth()` nas rotas (NÃO existe `middleware.ts`)
+- `src/app/gestao/(protected)/layout.tsx` — Redirect `/gestao/*` → `/gestao/login` quando não autenticado
+- Autorização por papel (`usuario.papel`: admin/gestor/visualizador) é verificada dentro das rotas de API — ex. `/api/gestao/exportar/dados` retorna 403 para `visualizador`; usuários precisam existir na tabela `usuario` (via `npm run seed`)
 - `src/lib/middleware/` — LGPD anonymization (`anonimizacao.ts`)
 - `src/lib/services/` — Agregação (`agregacao.ts`) + Exportação (`exportacao.ts`)
 - `src/components/formulario/` — 3-step form (tipo, descricao, revisao)
 - `src/components/ui/` — Shared UI (consentimento-lgpd, loading-skeleton)
 - `src/utils/` — Protocolo generator (`protocolo.ts`, format `NOT-YYYYMMDD-XXXX`)
-- `src/middleware.ts` — Next.js root middleware, protege `/gestao/*` com NextAuth
+- `src/seed.ts` — Seed de USFs/usuários (`npm run seed`)
 - `docs/stories/` — Numbered stories (e.g. `1.4-formulario-notificacao-3-passos.md`)
 - `docs/qa/gates/` — QA gate YAMLs
 - `drizzle/` — Generated migrations
@@ -74,6 +76,7 @@ Tests are colocated in `__tests__/` next to source files. 11 test files total.
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run test` | Vitest (modo run) |
 | `npm run test:watch` | Vitest (modo watch) |
+| `npm run seed` | Popula USFs + usuários (`npx dotenv-cli -e .env.local`) |
 | `npx drizzle-kit push` | Aplica schema ao Neon PostgreSQL (dev rápido) |
 | `npx drizzle-kit generate` | Gera migracoes a partir do schema |
 | `npx drizzle-kit migrate` | Aplica migracoes pendentes |

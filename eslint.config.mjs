@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Tooling/framework vendido fora do código da aplicação (src/).
+    ".aiox-core/**",
+    ".claude/**",
+    ".gemini/**",
   ]),
 ]);
 
